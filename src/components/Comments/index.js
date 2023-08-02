@@ -13,15 +13,12 @@ const initialContainerBackgroundClassNames = [
   'light-blue',
 ]
 
-const initialCommentsList = [
-  {name: 'venky', comment: 'keep going', isLiked: false},
-]
+const initialCommentsList = []
 
 // Write your code here
 
 class Comments extends Component {
   state = {
-    id: 'a',
     name: '',
     comment: '',
     commentsList: initialCommentsList,
@@ -29,46 +26,61 @@ class Comments extends Component {
 
   onNameChange = event => {
     this.setState({name: event.target.value})
-    console.log(event.target.value)
   }
 
   onCommentChange = event => {
     this.setState({comment: event.target.value})
-    console.log(event.target.value)
   }
 
   addComment = event => {
     event.preventDefault()
     const {name, comment} = this.state
-    const newComment = {
-      id: uuidv4(),
-      name,
-      comment,
-      isLiked: false,
-    }
-    try {
+    if (name !== '' || comment !== '') {
+      const newComment = {
+        id: uuidv4(),
+        name,
+        comment,
+        isLiked: false,
+        date: new Date(),
+      }
+      try {
+        this.setState(prevState => ({
+          commentsList: [...prevState.commentsList, newComment],
+          name: '',
+          comment: '',
+        }))
+      } catch (error) {
+        console.log(error.message)
+      }
+      const {commentsList} = this.state
+      console.log(commentsList)
+    } else {
       this.setState(prevState => ({
-        commentsList: [...prevState.commentsList, newComment],
-        name: '',
-        comment: '',
+        commentsList: [...prevState.commentsList],
       }))
-    } catch (error) {
-      console.log(error.message)
+      console.log('please enter')
     }
   }
 
   onLikeComment = id => {
-    console.log('initiated')
     this.setState(prevState => ({
       commentsList: prevState.commentsList.map(eachComment => {
-        console.log(id)
-        if (id === eachComment) {
-          console.log('found')
+        // console.log(eachComment)
+        if (id === eachComment.id) {
+          console.log('liked')
           return {...eachComment, isLiked: !eachComment.isLiked}
         }
         return eachComment
       }),
     }))
+  }
+
+  onDeleteComment = id => {
+    const {commentsList} = this.state
+    this.setState({
+      commentsList: commentsList.filter(eachComment => eachComment.id !== id),
+    })
+    console.log('deleted')
   }
 
   render() {
@@ -105,13 +117,18 @@ class Comments extends Component {
             src="https://assets.ccbp.in/frontend/react-js/comments-app/comments-img.png"
           />
         </div>
+
         <div className="bottom-container">
-          <h1>Comments</h1>
+          <p>
+            <span className="count">{commentsList.length}</span>Comments
+          </p>
           <ul className="comments-list">
             {commentsList.map(eachComment => (
               <CommentItem
+                key={eachComment.id}
                 commentData={eachComment}
                 onLikeComment={this.onLikeComment}
+                onDeleteComment={this.onDeleteComment}
               />
             ))}
           </ul>

@@ -52,6 +52,12 @@
   border-radius: 20px;
   margin-right: 10px;
 }
+.user-name {
+  color: darkolivegreen;
+}
+.time {
+  margin-left: 20px;
+}
 
 .interactions {
   display: flex;

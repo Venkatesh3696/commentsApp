@@ -1,16 +1,22 @@
 // Write your code here
+import {formatDistanceToNow} from 'date-fns'
+
 import './index.css'
 
 const CommentItem = props => {
-  const {commentData, onLikeComment} = props
-  const {id, name, comment, isLiked} = commentData
-  console.log(`start id  ${commentData}`)
+  const {commentData, onLikeComment, onDeleteComment} = props
+  const {id, name, comment, isLiked, date} = commentData
+  //   console.log(`start id in item  ${id}`)
+  const postedTime = formatDistanceToNow(date)
 
-  const firstLetter = name[0]
+  const firstLetter = name[0].toUpperCase()
 
   const onLike = () => {
-    console.log(`id:: ${id}`)
     onLikeComment(id)
+  }
+
+  const onDelete = () => {
+    onDeleteComment(id)
   }
 
   const likeImage = !isLiked
@@ -21,7 +27,8 @@ const CommentItem = props => {
       <div className="user-details">
         <div className="name-profile">
           <div className="first-letter">{firstLetter}</div>
-          <h1>{name}</h1>
+          <h1 className="user-name">{name}</h1>
+          <p className="time">{postedTime}</p>
         </div>
         <p>{comment}</p>
       </div>
@@ -31,11 +38,17 @@ const CommentItem = props => {
           <img alt="like" className="like-img" src={likeImage} />
           <p className="like-text">like</p>
         </button>
-        <img
+        <button
+          data-testid="delete"
+          type="button"
+          onClick={onDelete}
           className="like"
-          alt="delete"
-          src="https://assets.ccbp.in/frontend/react-js/comments-app/delete-img.png"
-        />
+        >
+          <img
+            alt="delete"
+            src="https://assets.ccbp.in/frontend/react-js/comments-app/delete-img.png"
+          />
+        </button>
       </div>
       <hr />
     </li>
